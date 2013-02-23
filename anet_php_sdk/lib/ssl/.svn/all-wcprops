@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/ssl
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/ssl/README
+END
+cert.pem
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/ssl/cert.pem
+END

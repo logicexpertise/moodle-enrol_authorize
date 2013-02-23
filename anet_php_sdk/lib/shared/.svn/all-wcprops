@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/shared
+END
+AuthorizeNetRequest.php
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/shared/AuthorizeNetRequest.php
+END
+AuthorizeNetResponse.php
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/shared/AuthorizeNetResponse.php
+END
+AuthorizeNetXMLResponse.php
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/shared/AuthorizeNetXMLResponse.php
+END
+AuthorizeNetTypes.php
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/mises_moodle/!svn/ver/4/trunk_new/enrol/authorize/anet_php_sdk/lib/shared/AuthorizeNetTypes.php
+END
