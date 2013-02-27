@@ -147,6 +147,15 @@ class enrol_authorize_plugin extends enrol_plugin {
     public function enrol_page_hook(stdClass $instance) {
         global $CFG, $SITE, $USER, $OUTPUT, $PAGE, $DB;
 
+        // ensure ssl is being used
+        if (!strpos($CFG->httpwwwroot, "https://")
+                && !strpos($SITE->url, "https://")
+                && !isset($_SERVER['HTTPS'])
+                && $_SERVER['HTTPS'] !== "on")
+        {
+            print_error('httpsrequired', 'enrol_authorize');
+        }
+
         ob_start();
 
         if ($DB->record_exists('user_enrolments', array('userid' => $USER->id, 'enrolid' => $instance->id))) {
