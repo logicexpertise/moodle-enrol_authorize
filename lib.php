@@ -145,7 +145,7 @@ class enrol_authorize_plugin extends enrol_plugin {
      * @return string html text, usually a form in a text box
      */
     public function enrol_page_hook(stdClass $instance) {
-        global $CFG, $SITE, $USER, $OUTPUT, $PAGE, $DB;
+        global $CFG, $SITE, $USER, $OUTPUT, $DB;
 
         // ensure ssl is being used
         if (!strpos($CFG->wwwroot, "https://")
