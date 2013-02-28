@@ -59,7 +59,24 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtextarea('enrol_authorize/receipt_footerhtml',
                     get_string('receipt_footerhtml', 'enrol_authorize'),
                     get_string('receipt_footerhtml_desc', 'enrol_authorize'), '', PARAM_CLEANHTML));
-    
+
+    // ---- email settings ------------------------------------------------
+    $settings->add(new admin_setting_heading('enrol_authorize_emaili_settings',
+                    get_string('email_settings', 'enrol_authorize'),
+                    get_string('email_settings_desc', 'enrol_authorize')));
+    $settings->add(new admin_setting_configtext('enrol_authorize_email_from',
+                    get_string('email_from', 'enrol_authorize'),
+                    get_string('email_from_desc', 'enrol_authorize'),$CFG->supportemail, PARAM_EMAIL));
+    $settings->add(new admin_setting_configtext('enrol_authorize_email_replyto',
+                    get_string('email_replyto', 'enrol_authorize'),
+                    get_string('email_replyto_desc', 'enrol_authorize'),$CFG->supportemail, PARAM_EMAIL));
+    $settings->add(new admin_setting_configtext('enrol_authorize/email_subject',
+                    get_string('email_subject', 'enrol_authorize'),
+                    get_string('email_subject_desc', 'enrol_authorize'), '', PARAM_TEXT));
+    $settings->add(new admin_setting_configtextarea('enrol_authorize/email_body',
+                    get_string('email_body', 'enrol_authorize'),
+                    get_string('email_body_desc', 'enrol_authorize'), '', PARAM_CLEANHTML));
+
     //--- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_authorize_defaults',
                     get_string('enrolinstancedefaults', 'admin'), get_string('enrolinstancedefaults_desc', 'admin')));

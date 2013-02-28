@@ -298,3 +298,16 @@ $string['receipt_addresshtml'] = 'HTML for company name and address on receipt';
 $string['receipt_addresshtml_desc'] = 'This will be printed in the receipt header / address area. Use this for your company name and address.';
 $string['receipt_footerhtml'] = 'HTML for receipt footer';
 $string['receipt_footerhtml_desc'] = 'This will be printed in the receipt footer. Use this for contact email, phone number, etc.';
+
+// email settings
+
+$string['email_settings'] = 'Email Settings';
+$string['email_settings_desc'] = 'Settings used for emailing a user when they have completed an enrolment';
+$string['email_from'] = 'From address';
+$string['email_from_desc'] = 'The address that will appear in the email \'from\' field';
+$string['email_replyto'] = 'Reply To address';
+$string['email_replyto_desc'] = 'The address that will appear in the email \'replyto\' field';
+$string['email_subject'] = 'Subject';
+$string['email_subject_desc'] = 'The email subject field content';
+$string['email_body'] = 'Body';
+$string['email_body_desc'] = 'The email main body content';
