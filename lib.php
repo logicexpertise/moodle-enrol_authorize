@@ -148,10 +148,9 @@ class enrol_authorize_plugin extends enrol_plugin {
         global $CFG, $SITE, $USER, $OUTPUT, $PAGE, $DB;
 
         // ensure ssl is being used
-        if (!strpos($CFG->httpwwwroot, "https://")
-                && !strpos($SITE->url, "https://")
-                && !isset($_SERVER['HTTPS'])
-                && $_SERVER['HTTPS'] !== "on")
+        if (!strpos($CFG->wwwroot, "https://")
+                || !isset($_SERVER['HTTPS'])
+                || $_SERVER['HTTPS'] !== "on")
         {
             print_error('httpsrequired', 'enrol_authorize');
         }
