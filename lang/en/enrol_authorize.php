@@ -248,6 +248,9 @@ $string['refunded'] = 'Refunded';
 $string['returns'] = 'Returns';
 $string['reviewfailed'] = 'Review Failed';
 $string['reviewnotify'] = 'Your payment will be reviewed. Expect an email within a few days from your teacher.';
+$string['sandbox'] = 'Payment Sandbox';
+$string['sandbox_desc'] = 'Enable Sandbox for payment and enrolment testing. Turn off for production ready sites only!';
+$string['sandbox_confirm'] = 'Are you absolutely sure you want to {$a} sandbox mode?'; // enable or disable
 $string['sendpaymentbutton'] = 'Send Payment via Authorize.Net';
 $string['settled'] = 'Settled';
 $string['settlementdate'] = 'Settlement Date';
@@ -300,7 +303,6 @@ $string['receipt_footerhtml'] = 'HTML for receipt footer';
 $string['receipt_footerhtml_desc'] = 'This will be printed in the receipt footer. Use this for contact email, phone number, etc.';
 
 // email settings
-
 $string['email_settings'] = 'Email Settings';
 $string['email_settings_desc'] = 'Settings used for emailing a user when they have completed an enrolment';
 $string['email_from'] = 'From address';

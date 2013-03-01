@@ -32,6 +32,8 @@ if ($ADMIN->fulltree) {
     //--- settings ------------------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_authorize_settings', '', get_string('pluginname_desc', 'enrol_authorize')));
 
+    $settings->add(new admin_setting_configcheckbox('enrol_authorize/sandbox', get_string('sandbox', 'enrol_authorize'), get_string('sandbox_desc', 'enrol_authorize'), '1'));
+
     $settings->add(new admin_setting_configtext('enrol_authorize/apilogin', get_string('apilogin', 'enrol_authorize'), get_string('apilogin_desc', 'enrol_authorize'), '', PARAM_TEXT));
 
     $settings->add(new admin_setting_configtext('enrol_authorize/transactionkey', get_string('transactionkey', 'enrol_authorize'), get_string('transactionkey_desc', 'enrol_authorize'), '', PARAM_TEXT));

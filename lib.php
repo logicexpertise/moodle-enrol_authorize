@@ -252,8 +252,10 @@ class enrol_authorize_plugin extends enrol_plugin {
                         }
 
                         $useripno = getremoteaddr();
-                        // TODO: CHANGE TO 'false' WHEN DEPLOYING LIVE!!!
-                        define('AUTHORIZENET_SANDBOX', true);
+                        // CHANGE TO 'false' WHEN DEPLOYING LIVE!!! via settings screen
+                        if ($enrol->get_config('sandbox', true) === true) {
+                            define('AUTHORIZENET_SANDBOX', true);
+                        }
                         $purchase = new AuthorizeNetAIM($enrol->get_config('apilogin'), $enrol->get_config('transactionkey'));
                         $purchase->first_name = $data->firstname;
                         $purchase->last_name = $data->lastname;
