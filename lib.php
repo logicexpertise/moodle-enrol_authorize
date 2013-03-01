@@ -213,9 +213,25 @@ class enrol_authorize_plugin extends enrol_plugin {
                 $coursefullname = format_string($course->fullname, true, array('context' => $context));
                 $courseshortname = $course->shortname;
 
+                // TODO move to lang strings
+                $description = '';
+                $period = '';
+                if ($instance->enrolperiod) {
+                    $period .= ' for ' . format_time($instance->enrolperiod);
+                }
+                if ($instance->enrolstartdate && $instance->enrolenddate) {
+                    $description .= ' This enrolment is valid between ' . userdate($instance->enrolstartdate) . ' and ' . userdate($instance->enrolenddate);
+                } else if ($instance->enrolstartdate) {
+                    $description .= ' after ' . userdate($instance->enrolstartdate);
+                } else if ($instance->enrolenddate) {
+                    $description .= ' before ' . userdate($instance->enrolenddate);
+                } else {
+                    $description .= 'This enrolment has no expiry date.';
+                }
                 echo '<div class="mdl-align"><p>' . get_string('paymentrequired') . '</p>';
                 echo '<p><b>' . get_string('enrolname', 'enrol_authorize') . '</b></p>';
-                echo '<p><b>' . get_string('cost') . ": $instance->currency $cost" . '</b></p>';
+                echo '<p><b>' . get_string('cost') . ": {$instance->currency} {$cost} {$period}" . '</b></p>';
+                echo '<p><b>' . $description . '</b></p>';
                 echo '</div>';
 
                 require_once "$CFG->dirroot/enrol/authorize/enrol_form.php";
