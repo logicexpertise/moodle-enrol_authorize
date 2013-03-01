@@ -231,17 +231,16 @@ function send_welcome_messages($orderdata) {
                 $a->courses = implode("\n", $usercourses);
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
-                $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-                $subject = get_string("enrolmentnew", 'enrol', format_string($SITE->shortname, true, array('context' => context_course::instance(SITEID))));
+                $emailmessage = get_config('email_body', get_string('welcometocoursesemail', 'enrol_authorize', $a));
 
                 $eventdata = new stdClass();
-                $eventdata->modulename        = 'moodle';
-                $eventdata->component         = 'enrol_authorize';
-                $eventdata->name              = 'authorize_enrolment';
-                $eventdata->userfrom          = $sender;
-                $eventdata->userto            = $user;
-                $eventdata->subject           = $subject;
-                $eventdata->fullmessage       = $emailmessage;
+                $eventdata->modulename = 'moodle';
+                $eventdata->component = 'enrol_authorize';
+                $eventdata->name = 'authorize_enrolment';
+                $eventdata->userfrom = get_config('email_from', $sender);
+                $eventdata->userto = $user;
+                $eventdata->subject = get_config('email_subject', get_string('enrolmentnew', 'enrol', $SITE->fullname));
+                $eventdata->fullmessage = $emailmessage;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
