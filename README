@@ -1,0 +1,9 @@
+INSTALLATION
+------------
+
+1. Create the enrol/authorize directory in your Moodle installation and copy the files and directories in this plugin into it
+
+2. In your Moodle site (as admin) go to Site Administration > Plugins > Enrolments > Manage enrol plugins, and click the eye icon
+for the Authorize.Net plugin to open it.
+
+3. Click Settings and fill the configuration form. Save your changes
