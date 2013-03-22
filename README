@@ -7,3 +7,9 @@ INSTALLATION
 for the Authorize.Net plugin to open it.
 
 3. Click Settings and fill the configuration form. Save your changes
+
+4. When deploying live, you need to change the value of ENROL_AUTHORIZE_NET_SANDBOX to 'false' in lib.php.  
+
+    Look for this line:
+                        define('AUTHORIZENET_SANDBOX', true);
+    and change 'true' to 'false'
