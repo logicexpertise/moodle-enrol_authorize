@@ -217,16 +217,17 @@ class enrol_authorize_plugin extends enrol_plugin {
                 $description = '';
                 $period = '';
                 if ($instance->enrolperiod) {
-                    $period .= ' for ' . format_time($instance->enrolperiod);
+                    $period .= get_string('enrolperiod', 'enrol_authorize', format_time($instance->enrolperiod));
                 }
                 if ($instance->enrolstartdate && $instance->enrolenddate) {
-                    $description .= ' This enrolment is valid between ' . userdate($instance->enrolstartdate) . ' and ' . userdate($instance->enrolenddate);
+                    $description .= get_string('enrolwindow', 'enrol_authorize',
+                            array('start'=>userdate($instance->enrolstartdate), 'end'=>userdate($instance->enrolenddate)));
                 } else if ($instance->enrolstartdate) {
-                    $description .= ' after ' . userdate($instance->enrolstartdate);
+                    $description .= get_string('enrolafter', 'enrol_authorize', userdate($instance->enrolstartdate));
                 } else if ($instance->enrolenddate) {
-                    $description .= ' before ' . userdate($instance->enrolenddate);
+                    $description .= get_string('enrolbefore', 'enrol_authorize', userdate($instance->enrolenddate));
                 } else {
-                    $description .= 'This enrolment has no expiry date.';
+                    $description .= get_string('enrolnolimit', 'enrol_authorize');
                 }
                 echo '<div class="mdl-align"><p>' . get_string('paymentrequired') . '</p>';
                 echo '<p><b>' . get_string('enrolname', 'enrol_authorize') . '</b></p>';
