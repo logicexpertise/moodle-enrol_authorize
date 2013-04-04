@@ -75,9 +75,9 @@ function authorize_print_orders($courseid, $userid) {
 
     $baseurl = $CFG->wwwroot.'/enrol/authorize/index.php?user='.$userid;
 
-    $params = array('userid'=>$userid);
-    $sql = "SELECT c.id, c.fullname FROM {course} c JOIN {enrol_authorize} e ON c.id = e.courseid ";
-    $sql .= ($userid > 0) ? "WHERE (e.userid=:userid) " : '';
+    $params = array('userid' => $userid);
+    $sql = "SELECT DISTINCT c.id, c.fullname, c.sortorder FROM {course} c JOIN {enrol_authorize} e ON c.id = e.courseid ";
+    $sql .= ( $userid > 0) ? "WHERE (e.userid=:userid) " : '';
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if (($popupcrs = $DB->get_records_sql_menu($sql, $params))) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
