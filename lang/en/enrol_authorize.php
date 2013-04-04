@@ -109,7 +109,7 @@ $string['avsw'] = '9 digit postal code matches, address (street) does not';
 $string['avsx'] = 'Address (street) and 9 digit postal code match';
 $string['avsy'] = 'Address (street) and 5 digit postal code match';
 $string['avsz'] = '5 digit postal code matches, address (street) does not';
-$string['callsupport'] = 'If this is the first time you have received this error, please verify that all of your payment information was entered correctly. If this is not the first time you have received this message, please email or call for assistance.';
+$string['callsupport'] = 'If this is the first time you have received this error, please verify that all of your payment information was entered correctly. If this is not the first time you have received this message, please email or call Technical Support for assistance.';
 $string['canbecredit'] = 'Can be refunded to {$a->upto}';
 $string['cancelled'] = 'Cancelled';
 $string['capture'] = 'Capture';
@@ -313,3 +313,10 @@ $string['email_subject'] = 'Subject';
 $string['email_subject_desc'] = 'The email subject field content';
 $string['email_body'] = 'Body';
 $string['email_body_desc'] = 'The email main body content';
+
+// enrolment periods
+$string['enrolfor'] = 'for {$a}.';
+$string['enrolwindow'] = 'This enrolment is valid between {$a->start} and {$a->end}.';
+$string['enrolafter'] = 'This enrolment is valid after {$a}.';
+$string['enrolbefore'] = 'This enrolment is valid before {$a}.';
+$string['enrolnolimit'] = 'This enrolment has no expiry date.';
