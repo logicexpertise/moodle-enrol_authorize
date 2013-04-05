@@ -555,6 +555,18 @@ function authorize_print_order($orderid)
         }
     }
 
+    /// if status is AUTH_CAPTURE, show a "print receipt" button
+    if ($order->status == AN_STATUS_AUTHCAPTURE) {
+        $link = new moodle_url($CFG->wwwroot . '/enrol/authorize/receipt.php', array('order' => $order->id, 'action' => 'receipt'));
+        echo '<div style="text-align:center;">';
+        $button = new single_button($link, get_string('printreceipt', 'enrol_authorize'));
+        $button->add_action(new popup_action('click', $link, array('height' => 600, 'width' => 800)));
+        echo $OUTPUT->render($button);
+        // continue to course front page
+        echo $OUTPUT->continue_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$order->courseid)));
+        echo '</div';
+    }
+
     echo $OUTPUT->footer();
 }
 
