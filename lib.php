@@ -267,13 +267,12 @@ class enrol_authorize_plugin extends enrol_plugin {
                             message_to_admin("Error while trying to insert new data", $order);
                             return "Insert record error. Admin has been notified!";
                         }
-
                         $useripno = getremoteaddr();
-                        // CHANGE TO 'false' WHEN DEPLOYING LIVE!!! via settings screen
-                        if ($enrol->get_config('sandbox', true) === true) {
-                            define('AUTHORIZENET_SANDBOX', true);
-                        }
                         $purchase = new AuthorizeNetAIM($enrol->get_config('apilogin'), $enrol->get_config('transactionkey'));
+                        // CHANGE TO 'false' WHEN DEPLOYING LIVE!!! via settings screen
+                        if ($enrol->get_config('sandbox', true) === '0') {
+                            $purchase->setSandbox(false);
+                        }
                         $purchase->first_name = $data->firstname;
                         $purchase->last_name = $data->lastname;
                         $purchase->address = $data->ccaddress;
