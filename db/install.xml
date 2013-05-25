@@ -1,67 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="enrol/authorize/db" VERSION="20110514" COMMENT="XMLDB file for Moodle enrol/authorize"
+<XMLDB PATH="enrol/authorize/db" VERSION="20120122" COMMENT="XMLDB file for Moodle enrol/authorize"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="enrol_authorize" COMMENT="Holds all known information about authorize.net transactions" NEXT="enrol_authorize_refunds">
+    <TABLE NAME="enrol_authorize" COMMENT="Holds all known information about authorize.net transactions">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="paymentmethod"/>
-        <FIELD NAME="paymentmethod" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="cc" SEQUENCE="false" PREVIOUS="id" NEXT="refundinfo"/>
-        <FIELD NAME="refundinfo" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="paymentmethod" NEXT="ccname"/>
-        <FIELD NAME="ccname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" PREVIOUS="refundinfo" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="ccname" NEXT="instanceid"/>
-        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="courseid" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="instanceid" NEXT="transid"/>
-        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="receipt"/>
-        <FIELD NAME="receipt" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Receipt number" PREVIOUS="transid" NEXT="status"/>
-        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="receipt" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="status" NEXT="settletime"/>
-        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timecreated" NEXT="amount"/>
-        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="settletime" NEXT="currency"/>
-        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="USD" SEQUENCE="false" PREVIOUS="amount"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="paymentmethod" TYPE="char" LENGTH="6" NOTNULL="true" DEFAULT="cc" SEQUENCE="false"/>
+        <FIELD NAME="refundinfo" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="ccname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="currency" TYPE="char" LENGTH="3" NOTNULL="true" DEFAULT="USD" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
       <INDEXES>
-        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid" NEXT="userid"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" PREVIOUS="courseid" NEXT="status"/>
-        <INDEX NAME="status" UNIQUE="false" FIELDS="status" PREVIOUS="userid" NEXT="transid"/>
-        <INDEX NAME="transid" UNIQUE="false" FIELDS="transid" PREVIOUS="status"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="transid" UNIQUE="false" FIELDS="transid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="enrol_authorize_refunds" COMMENT="Authorize.net refunds" PREVIOUS="enrol_authorize" NEXT="enrol_authorize_avs">
+    <TABLE NAME="enrol_authorize_refunds" COMMENT="Authorize.net refunds">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="orderid"/>
-        <FIELD NAME="orderid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="status"/>
-        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="orderid" NEXT="amount"/>
-        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="status" NEXT="transid"/>
-        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="amount" NEXT="settletime"/>
-        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="transid"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="orderid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="amount" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="transid" TYPE="int" LENGTH="20" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="settletime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="orderid"/>
-        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Reference to enrol_authorize.id" PREVIOUS="primary"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="orderid" TYPE="foreign" FIELDS="orderid" REFTABLE="enrol_authorize" REFFIELDS="id" COMMENT="Reference to enrol_authorize.id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="transid" UNIQUE="false" FIELDS="transid"/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="enrol_authorize_avs" COMMENT="Holds information for the credit card address. The CC address is shown on the payment form if AVS is turned on in the plugin configuration, and is the address displayed on the receipt" PREVIOUS="enrol_authorize_refunds">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="orderid"/>
-        <FIELD NAME="orderid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Order ID. This is the id column of enrol_authorize table" PREVIOUS="id" NEXT="ccfirstname"/>
-        <FIELD NAME="ccfirstname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="CC firstname" PREVIOUS="orderid" NEXT="cclastname"/>
-        <FIELD NAME="cclastname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="CC lastname" PREVIOUS="ccfirstname" NEXT="ccaddress"/>
-        <FIELD NAME="ccaddress" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="CC address" PREVIOUS="cclastname" NEXT="cccity"/>
-        <FIELD NAME="cccity" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="CC city" PREVIOUS="ccaddress" NEXT="ccstate"/>
-        <FIELD NAME="ccstate" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="CC state" PREVIOUS="cccity" NEXT="cccountry"/>
-        <FIELD NAME="cccountry" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="CC country" PREVIOUS="ccstate"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

@@ -17,14 +17,15 @@
 /**
  * Authorize.Net enrolment plugin version specification.
  *
- * @package    enrol
- * @subpackage authorize
- * @author     Dan Watts - based on code by Eugene Venter
+ * @package    enrol_authorize
+ * @copyright  2010 Eugene Venter
+ * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2012051300;
-$plugin->requires = 2010090501;
-$plugin->cron = 180;
+$plugin->version   = 2013050100;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->requires  = 2013050100;        // Requires this Moodle version
+$plugin->component = 'enrol_authorize'; // Full name of the plugin (used for diagnostics)
+$plugin->cron      = 180;

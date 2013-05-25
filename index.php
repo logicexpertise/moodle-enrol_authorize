@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  * Adds new instance of enrol_authorize to specified course
  * or edits current instance.
  *
- * @package    enrol
- * @subpackage authorize
+ * @package    enrol_authorize
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -39,7 +37,7 @@
     $courseid = optional_param('course', SITEID, PARAM_INT);
     $userid   = optional_param('user', 0, PARAM_INT);
 
-    $url = new moodle_url($CFG->httpswwwroot . '/enrol/authorize/index.php');
+    $url = new moodle_url('/enrol/authorize/index.php');
     if ($orderid !== 0) {
         $url->param('order', $orderid);
     }
@@ -49,14 +47,11 @@
     if ($userid !== 0) {
         $url->param('user', $userid);
     }
-
-    $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $PAGE->set_url($url);
-    $PAGE->set_context($context);
 
 /// Get course
     if (!($course = $DB->get_record('course', array('id'=>$courseid)))) {
-        print_error('invalidcourseid', '', '', $courseid);
+        print_error('invalidcourseid');
     }
 
 /// Only SITE users can access to this page

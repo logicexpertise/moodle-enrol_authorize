@@ -19,8 +19,7 @@
  *
  * This plugin allows you to set up paid courses, using authorize.net.
  *
- * @package    enrol
- * @subpackage authorize
+ * @package    enrol_authorize
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -134,17 +133,14 @@ class AuthorizeNet
                 'x_delim_char'      => self::AN_DELIM,
                 'x_encap_char'      => self::AN_ENCAP,
                 'x_relay_response'  => 'FALSE',
-                // 'x_login'           => $mconfig->an_login
-                'x_login'           => $mconfig->apilogin
+                'x_login'           => $mconfig->an_login
             );
 
-            // if (!empty($mconfig->an_tran_key)) {
-            if (!empty($mconfig->transactionkey)) {
-                $constpd['x_tran_key'] = $mconfig->transactionkey;
+            if (!empty($mconfig->an_tran_key)) {
+                $constpd['x_tran_key'] = $mconfig->an_tran_key;
             }
             else {
-                // $constpd['x_password'] = $mconfig->an_password;
-                $constpd['x_password'] = $mconfig->apipassword;
+                $constpd['x_password'] = $mconfig->an_password;
             }
         }
 

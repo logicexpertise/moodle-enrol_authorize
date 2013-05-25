@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,20 +19,20 @@
  *
  * This plugin allows you to set up paid courses, using authorize.net.
  *
- * @package    enrol
- * @subpackage authorize
+ * @package    enrol_authorize
  * @copyright  2010 Eugene Venter
  * @author     Eugene Venter
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');
 }
 
 define('ORDER_CAPTURE', 'capture');
-define('ORDER_DELETE', 'delete');
-define('ORDER_REFUND', 'refund');
-define('ORDER_VOID', 'void');
+define('ORDER_DELETE',  'delete');
+define('ORDER_REFUND',  'refund');
+define('ORDER_VOID',    'void');
 
 /**
  * authorize_print_orders
@@ -46,7 +45,7 @@ function authorize_print_orders($courseid, $userid) {
 
     $plugin = enrol_get_plugin('authorize');
 
-    require_once($CFG->libdir . '/tablelib.php');
+    require_once($CFG->libdir.'/tablelib.php');
 
     $perpage = optional_param('perpage', 10, PARAM_INT);
     $showonlymy = optional_param('showonlymy', 0, PARAM_BOOL);
@@ -54,32 +53,36 @@ function authorize_print_orders($courseid, $userid) {
     $searchtype = optional_param('searchtype', 'orderid', PARAM_ALPHA);
     $status = optional_param('status', AN_STATUS_NONE, PARAM_INT);
 
+    $coursecontext = context_course::instance($courseid);
+
     $searchmenu = array('orderid' => $authstrs->orderid, 'transid' => $authstrs->transid, 'cclastfour' => $authstrs->cclastfour);
     $buttons = "<form method='post' action='index.php' autocomplete='off'><div>";
+    $buttons .= html_writer::label(get_string('orderdetails', 'enrol_authorize'), 'menusearchtype', false, array('class' => 'accesshide'));
     $buttons .= html_writer::select($searchmenu, 'searchtype', $searchtype, false);
-    $buttons .= "<input type='text' size='16' name='searchquery' value='' />";
+    $buttons .= html_writer::label(get_string('search'), 'searchquery', false, array('class' => 'accesshide'));
+    $buttons .= "<input id='searchquery' type='text' size='16' name='searchquery' value='' />";
     $buttons .= "<input type='submit' value='$strs->search' />";
     $buttons .= "</div></form>";
 
-    if (has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
-        $buttons .= "<form method='get' action='uploadcsv.php'><div><input type='submit' value='" . get_string('uploadcsv', 'enrol_authorize') . "' /></div></form>";
+    if (has_capability('enrol/authorize:uploadcsv', context_user::instance($USER->id))) {
+        $buttons .= "<form method='get' action='uploadcsv.php'><div><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></div></form>";
     }
 
-    $canmanagepayments = has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $courseid));
+    $canmanagepayments = has_capability('enrol/authorize:managepayments', $coursecontext);
     if ($showonlymy || !$canmanagepayments) {
         $userid = $USER->id;
     }
 
-    $baseurl = $CFG->wwwroot . '/enrol/authorize/index.php?user=' . $userid;
+    $baseurl = $CFG->wwwroot.'/enrol/authorize/index.php?user='.$userid;
 
-    $params = array('userid' => $userid);
-    $sql = "SELECT DISTINCT c.id, c.fullname FROM {course} c JOIN {enrol_authorize} e ON c.id = e.courseid ";
-    $sql .= ( $userid > 0) ? "WHERE (e.userid=:userid) " : '';
+    $params = array('userid'=>$userid);
+    $sql = "SELECT c.id, c.fullname FROM {course} c JOIN {enrol_authorize} e ON c.id = e.courseid ";
+    $sql .= ($userid > 0) ? "WHERE (e.userid=:userid) " : '';
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if (($popupcrs = $DB->get_records_sql_menu($sql, $params))) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
     }
-    $popupmenu = empty($popupcrs) ? '' : $OUTPUT->single_select(new moodle_url($baseurl . '&status=' . $status), 'course', $popupcrs, $courseid, null, 'coursesmenu');
+    $popupmenu = empty($popupcrs) ? '' : $OUTPUT->single_select(new moodle_url($baseurl.'&status='.$status), 'course', $popupcrs, $courseid, null, 'coursesmenu');
     $popupmenu .= '<br />';
     $statusmenu = array(
         AN_STATUS_NONE => $strs->all,
@@ -95,16 +98,17 @@ function authorize_print_orders($courseid, $userid) {
         AN_STATUS_TEST => $authstrs->tested
     );
 
-    $popupmenu .= $OUTPUT->single_select(new moodle_url($baseurl . '&course=' . $courseid), 'status', $statusmenu, $status, null, 'statusmenu');
+    $popupmenu .= $OUTPUT->single_select(new moodle_url($baseurl.'&course='.$courseid), 'status', $statusmenu, $status, null, 'statusmenu');
     if ($canmanagepayments) {
         $popupmenu .= '<br />';
         $PAGE->requires->js('/enrol/authorize/authorize.js');
         $aid = $OUTPUT->add_action_handler(new component_action('click', 'authorize_jump_to_mypayments', array('userid' => $USER->id, 'status' => $status)));
-        $popupmenu .= html_writer::checkbox('enrol_authorize', 1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), array('id' => $aid));
+        $popupmenu .= html_writer::checkbox('enrol_authorize', 1, $userid == $USER->id, get_string('mypaymentsonly', 'enrol_authorize'), array('id'=>$aid));
     }
 
     if (SITEID != $courseid) {
-        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id' => $course->id)));
+        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $PAGE->navbar->add($shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
     $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php');
     $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
@@ -120,14 +124,12 @@ function authorize_print_orders($courseid, $userid) {
     $table->set_attribute('id', 'orders');
     $table->set_attribute('class', 'generaltable generalbox');
 
-    if ($perpage > 100) {
-        $perpage = 100;
-    }
+    if ($perpage > 100) { $perpage = 100; }
     $perpagemenus = array(5 => 5, 10 => 10, 20 => 20, 50 => 50, 100 => 100);
-    $perpagemenu = $OUTPUT->single_select(new moodle_url($baseurl . '&status=' . $status . '&course=' . $courseid), 'perpage', $perpagemenus, $perpage, array('' => 'choosedots'), 'perpagemenu');
+    $perpagemenu = $OUTPUT->single_select(new moodle_url($baseurl.'&status='.$status.'&course='.$courseid), 'perpage', $perpagemenus, $perpage, array(''=>'choosedots'), 'perpagemenu');
     $table->define_columns(array('id', 'userid', 'timecreated', 'status', 'action'));
     $table->define_headers(array($authstrs->orderid, $authstrs->shopper, $strs->time, $strs->status, $perpagemenu));
-    $table->define_baseurl($baseurl . "&amp;status=$status&amp;course=$courseid&amp;perpage=$perpage");
+    $table->define_baseurl($baseurl."&amp;status=$status&amp;course=$courseid&amp;perpage=$perpage");
 
     $table->no_sorting('action');
     $table->sortable(true, 'id', SORT_DESC);
@@ -135,12 +137,12 @@ function authorize_print_orders($courseid, $userid) {
     $table->setup();
 
     $select = "SELECT e.id, e.paymentmethod, e.refundinfo, e.transid, e.courseid, e.userid, e.status, e.ccname, e.timecreated, e.settletime ";
-    $from = "FROM {enrol_authorize} e ";
-    $where = "WHERE (1=1) ";
+    $from   = "FROM {enrol_authorize} e ";
+    $where  = "WHERE (1=1) ";
     $params = array();
 
     if (!empty($searchquery)) {
-        switch ($searchtype) {
+        switch($searchtype) {
             case 'orderid':
                 $where = "WHERE (e.id = :searchquery) ";
                 $params['searchquery'] = $searchquery;
@@ -158,8 +160,10 @@ function authorize_print_orders($courseid, $userid) {
                 $params['method'] = AN_METHOD_CC;
                 break;
         }
-    } else {
-        switch ($status) {
+    }
+    else {
+        switch ($status)
+        {
             case AN_STATUS_NONE:
                 if (!$plugin->get_config('an_test')) {
                     $where .= "AND (e.status != :status) ";
@@ -221,7 +225,8 @@ function authorize_print_orders($courseid, $userid) {
 
             if (empty($actionstatus->actions)) {
                 $actions .= $strs->none;
-            } else {
+            }
+            else {
                 foreach ($actionstatus->actions as $val) {
                     $actions .= authorize_print_action_button($record->id, $val);
                 }
@@ -246,7 +251,8 @@ function authorize_print_orders($courseid, $userid) {
  *
  * @param object $order
  */
-function authorize_print_order($orderid) {
+function authorize_print_order($orderid)
+{
     global $CFG, $USER, $DB, $OUTPUT, $PAGE;
     global $strs, $authstrs;
 
@@ -257,20 +263,20 @@ function authorize_print_order($orderid) {
     $unenrol = optional_param('unenrol', 0, PARAM_BOOL);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-    if (!$order = $DB->get_record('enrol_authorize', array('id' => $orderid))) {
+    if (!$order = $DB->get_record('enrol_authorize', array('id'=>$orderid))) {
         print_error('orderidnotfound', '',
                 "$CFG->wwwroot/enrol/authorize/index.php", $orderid);
     }
 
-    if (!$course = $DB->get_record('course', array('id' => $order->courseid))) {
+    if (!$course = $DB->get_record('course', array('id'=>$order->courseid))) {
         print_error('invalidcourseid', '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
-    if (!$user = $DB->get_record('user', array('id' => $order->userid))) {
+    if (!$user = $DB->get_record('user', array('id'=>$order->userid))) {
         print_error('nousers', '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+    $coursecontext = context_course::instance($course->id);
     if ($USER->id != $order->userid) { // Current user viewing someone else's order
         require_capability('enrol/authorize:managepayments', $coursecontext);
     }
@@ -280,12 +286,14 @@ function authorize_print_order($orderid) {
     $color = authorize_get_status_color($statusandactions->status);
 
     $buttons = '';
-    if (empty($do)) {
+    if (empty($do))
+    {
         if (empty($statusandactions->actions)) {
-            if ((AN_METHOD_ECHECK == $order->paymentmethod) && has_capability('enrol/authorize:uploadcsv', get_context_instance(CONTEXT_USER, $USER->id))) {
-                $buttons .= "<form method='get' action='uploadcsv.php'><div><input type='submit' value='" . get_string('uploadcsv', 'enrol_authorize') . "' /></div></form>";
+            if ((AN_METHOD_ECHECK == $order->paymentmethod) && has_capability('enrol/authorize:uploadcsv', context_user::instance($USER->id))) {
+                $buttons .= "<form method='get' action='uploadcsv.php'><div><input type='submit' value='".get_string('uploadcsv', 'enrol_authorize')."' /></div></form>";
             }
-        } else {
+        }
+        else {
             foreach ($statusandactions->actions as $val) {
                 $buttons .= authorize_print_action_button($orderid, $val);
             }
@@ -293,9 +301,10 @@ function authorize_print_order($orderid) {
     }
 
     if (SITEID != $course->id) {
-        $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id' => $course->id)));
+        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+        $PAGE->navbar->add($shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
     }
-    $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course=' . $course->id);
+    $PAGE->navbar->add($authstrs->paymentmanagement, 'index.php?course='.$course->id);
     $PAGE->navbar->add($authstrs->orderid . ': ' . $orderid, 'index.php');
     $PAGE->set_course($course);
     $PAGE->set_title("$course->shortname: $authstrs->paymentmanagement");
@@ -311,11 +320,12 @@ function authorize_print_order($orderid) {
 
     if (AN_METHOD_CC == $order->paymentmethod) {
         $table->data[] = array("<b>$authstrs->paymentmethod:</b>", $authstrs->methodcc);
-        $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname . ' (<b><a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '">' . fullname($user) . '</a></b>)');
-        $table->data[] = array("<b>$authstrs->cclastfour:</b>", str_pad($order->refundinfo, 4, "0", STR_PAD_LEFT));
-    } else {
+        $table->data[] = array("<b>$authstrs->nameoncard:</b>", $order->ccname . ' (<b><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'">'.fullname($user).'</a></b>)');
+        $table->data[] = array("<b>$authstrs->cclastfour:</b>", $order->refundinfo);
+    }
+    else {
         $table->data[] = array("<b>$authstrs->paymentmethod:</b>", $authstrs->methodecheck);
-        $table->data[] = array("<b>$authstrs->echeckfirslasttname:</b>", $order->ccname . ' (<b><a href="' . $CFG->wwwroot . '/user/view.php?id=' . $user->id . '">' . fullname($user) . '</a></b>)');
+        $table->data[] = array("<b>$authstrs->echeckfirslasttname:</b>", $order->ccname . ' (<b><a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'">'.fullname($user).'</a></b>)');
         $table->data[] = array("<b>$authstrs->isbusinesschecking:</b>", ($order->refundinfo == 1) ? $strs->yes : $strs->no);
     }
 
@@ -336,20 +346,25 @@ function authorize_print_order($orderid) {
                             send_welcome_messages($orderid);
                         }
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
-                    } else {
-                        redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", "Error while trying to enrol " . fullname($user) . " in '" . format_string($course->shortname) . "'", 20);
                     }
-                } else {
+                    else {
+                        $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                        redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", "Error while trying to enrol ".fullname($user)." in '" . $shortname . "'", 20);
+                    }
+                }
+                else {
                     redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", get_string('testwarning', 'enrol_authorize'), 10);
                 }
-            } else {
+            }
+            else {
                 redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $message, 20);
             }
         }
         $table->data[] = array("<b>$strs->confirm:</b>", get_string('captureyes', 'enrol_authorize') . '<br />' .
-            authorize_print_action_button($orderid, ORDER_CAPTURE, 0, true, false, $strs->no));
+                               authorize_print_action_button($orderid, ORDER_CAPTURE, 0, true, false, $strs->no));
         echo html_writer::table($table);
-    } elseif (ORDER_REFUND == $do && in_array(ORDER_REFUND, $statusandactions->actions)) {
+    }
+    elseif (ORDER_REFUND == $do && in_array(ORDER_REFUND, $statusandactions->actions)) {
         $refunded = 0.0;
         $sql = "SELECT SUM(amount) AS refunded
                   FROM {enrol_authorize_refunds}
@@ -379,43 +394,49 @@ function authorize_print_order($orderid) {
                 if (empty($an_test)) {
                     if (empty($extra->id)) {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", "insert record error", 20);
-                    } else {
+                    }
+                    else {
                         if (!empty($unenrol)) {
-                            $pinstance = $DB->get_record('enrol', array('id' => $order->instanceid));
+                            $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
                             $plugin->unenrol_user($pinstance, $order->userid);
                             //role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
                         }
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
                     }
-                } else {
+                }
+                else {
                     redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", get_string('testwarning', 'enrol_authorize'), 10);
                 }
-            } else {
+            }
+            else {
                 redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $message, 20);
             }
         }
         $a = new stdClass;
         $a->upto = $upto;
-        $extrahtml = get_string('howmuch', 'enrol_authorize') .
-                ' <input type="text" size="5" name="amount" value="' . $amount . '" /> ' .
-                get_string('canbecredit', 'enrol_authorize', $a) . '<br />';
+        $inputattrs = array('id' => 'amount', 'type' => 'text', 'size' => '5', 'name' => 'amount', 'value' => $amount);
+        $extrahtml = html_writer::label(get_string('howmuch', 'enrol_authorize'), 'amount'). ' '.
+                     html_writer::empty_tag('input', $inputattrs). ' '.
+                     get_string('canbecredit', 'enrol_authorize', $a) . '<br />';
         $table->data[] = array("<b>$strs->confirm:</b>",
-            authorize_print_action_button($orderid, ORDER_REFUND, 0, true, $authstrs->unenrolstudent, $strs->no, $extrahtml));
+                               authorize_print_action_button($orderid, ORDER_REFUND, 0, true, $authstrs->unenrolstudent, $strs->no, $extrahtml));
         echo html_writer::table($table);
-    } elseif (ORDER_DELETE == $do && in_array(ORDER_DELETE, $statusandactions->actions)) {
+    }
+    elseif (ORDER_DELETE == $do && in_array(ORDER_DELETE, $statusandactions->actions)) {
         if ($confirm && confirm_sesskey()) {
             if (!empty($unenrol)) {
-                $pinstance = $DB->get_record('enrol', array('id' => $order->instanceid));
+                $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
                 $plugin->unenrol_user($pinstance, $order->userid);
                 //role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
             }
-            $DB->delete_records('enrol_authorize', array('id' => $orderid));
+            $DB->delete_records('enrol_authorize', array('id'=>$orderid));
             redirect("$CFG->wwwroot/enrol/authorize/index.php");
         }
         $table->data[] = array("<b>$strs->confirm:</b>",
-            authorize_print_action_button($orderid, ORDER_DELETE, 0, true, $authstrs->unenrolstudent, $strs->no));
+                               authorize_print_action_button($orderid, ORDER_DELETE, 0, true, $authstrs->unenrolstudent,$strs->no));
         echo html_writer::table($table);
-    } elseif (ORDER_VOID == $do) { // special case: cancel original or refunded transaction?
+    }
+    elseif (ORDER_VOID == $do) { // special case: cancel original or refunded transaction?
         $suborderid = optional_param('suborder', 0, PARAM_INT);
         if (empty($suborderid) && in_array(ORDER_VOID, $statusandactions->actions)) { // cancel original
             if ($confirm && confirm_sesskey()) {
@@ -424,17 +445,20 @@ function authorize_print_order($orderid) {
                 if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_VOID)) {
                     if (empty($an_test)) {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
-                    } else {
+                    }
+                    else {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", get_string('testwarning', 'enrol_authorize'), 10);
                     }
-                } else {
+                }
+                else {
                     redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $message, 20);
                 }
             }
             $table->data[] = array("<b>$strs->confirm:</b>", get_string('voidyes', 'enrol_authorize') . '<br />' .
-                authorize_print_action_button($orderid, ORDER_VOID, 0, true, false, $strs->no));
+                                   authorize_print_action_button($orderid, ORDER_VOID, 0, true, false, $strs->no));
             echo html_writer::table($table);
-        } elseif (!empty($suborderid)) { // cancel refunded
+        }
+        elseif (!empty($suborderid)) { // cancel refunded
             $sql = "SELECT r.*, e.courseid, e.paymentmethod
                       FROM {enrol_authorize_refunds} r
                 INNER JOIN {enrol_authorize} e
@@ -456,15 +480,17 @@ function authorize_print_order($orderid) {
                     if (AN_APPROVED == AuthorizeNet::process($suborder, $message, $extra, AN_ACTION_VOID)) {
                         if (empty($an_test)) {
                             if (!empty($unenrol)) {
-                                $pinstance = $DB->get_record('enrol', array('id' => $order->instanceid));
+                                $pinstance = $DB->get_record('enrol', array('id'=>$order->instanceid));
                                 $plugin->unenrol_user($pinstance, $order->userid);
                                 //role_unassign_all(array('userid'=>$order->userid, 'contextid'=>$coursecontext->id, 'component'=>'enrol_authorize'), true, true);
                             }
                             redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
-                        } else {
+                        }
+                        else {
                             redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", get_string('testwarning', 'enrol_authorize'), 10);
                         }
-                    } else {
+                    }
+                    else {
                         redirect("$CFG->wwwroot/enrol/authorize/index.php?order=$orderid", $message, 20);
                     }
                 }
@@ -472,11 +498,12 @@ function authorize_print_order($orderid) {
                 $a->transid = $suborder->transid;
                 $a->amount = $suborder->amount;
                 $table->data[] = array("<b>$strs->confirm:</b>", get_string('subvoidyes', 'enrol_authorize', $a) . '<br />' .
-                    authorize_print_action_button($orderid, ORDER_VOID, $suborderid, true, $authstrs->unenrolstudent, $strs->no));
+                                       authorize_print_action_button($orderid, ORDER_VOID, $suborderid, true, $authstrs->unenrolstudent, $strs->no));
                 echo html_writer::table($table);
             }
         }
-    } else {
+    }
+    else {
         echo html_writer::table($table);
 
         if ($settled) { // show refunds.
@@ -498,7 +525,8 @@ function authorize_print_order($orderid) {
                     $substatus = authorize_get_status_action($rf);
                     if (empty($substatus->actions)) {
                         $subactions .= $strs->none;
-                    } else {
+                    }
+                    else {
                         foreach ($substatus->actions as $vl) {
                             $subactions .= authorize_print_action_button($orderid, $vl, $rf->id);
                         }
@@ -512,28 +540,19 @@ function authorize_print_order($orderid) {
                     $t2->data[] = array(
                         userdate($rf->settletime),
                         $rf->transid,
-                        "<b><font style='color:$color'>" . $authstrs->{$substatus->status} . "</font></b>",
+                        "<b><font style='color:$color'>" .$authstrs->{$substatus->status} . "</font></b>",
                         $subactions,
                         format_float($sign . $rf->amount, 2)
                     );
                 }
-                $t2->data[] = array('', '', get_string('total'), $order->currency, format_float('-' . $sumrefund, 2));
-            } else {
-                $t2->data[] = array('', '', get_string('noreturns', 'enrol_authorize'), '', '');
+                $t2->data[] = array('','',get_string('total'),$order->currency,format_float('-'.$sumrefund, 2));
+            }
+            else {
+                $t2->data[] = array('','',get_string('noreturns', 'enrol_authorize'),'','');
             }
             echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
             echo html_writer::table($t2);
         }
-    }
-
-    /// if status is AUTH_CAPTURE, show a "print receipt" button
-    if ($order->status == AN_STATUS_AUTHCAPTURE) {
-        $link = new moodle_url($CFG->wwwroot . '/enrol/authorize/receipt.php', array('order' => $order->id, 'action' => 'receipt'));
-        echo '<div style="text-align:center;">';
-        $button = new single_button($link, get_string('printreceipt', 'enrol_authorize'));
-        $button->add_action(new popup_action('click', $link, array('height' => 600, 'width' => 800)));
-        echo $OUTPUT->render($button);
-        echo '</div';
     }
 
     echo $OUTPUT->footer();
@@ -545,7 +564,8 @@ function authorize_print_order($orderid) {
  * @param object $order Order details.
  * @return object
  */
-function authorize_get_status_action($order) {
+function authorize_get_status_action($order)
+{
     global $CFG;
     static $newordertime = 0;
 
@@ -556,7 +576,7 @@ function authorize_get_status_action($order) {
     $ret = new stdClass();
     $ret->actions = array();
 
-    $canmanage = has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $order->courseid));
+    $canmanage = has_capability('enrol/authorize:managepayments', context_course::instance($order->courseid));
 
     if (floatval($order->transid) == 0) { // test transaction or new order
         if ($order->timecreated < $newordertime) {
@@ -564,7 +584,8 @@ function authorize_get_status_action($order) {
                 $ret->actions = array(ORDER_DELETE);
             }
             $ret->status = 'tested';
-        } else {
+        }
+        else {
             $ret->status = 'new';
         }
         return $ret;
@@ -577,7 +598,8 @@ function authorize_get_status_action($order) {
                     $ret->actions = array(ORDER_DELETE);
                 }
                 $ret->status = 'expired';
-            } else {
+            }
+            else {
                 if ($canmanage) {
                     $ret->actions = array(ORDER_CAPTURE, ORDER_VOID);
                 }
@@ -593,7 +615,8 @@ function authorize_get_status_action($order) {
                     }
                 }
                 $ret->status = 'settled';
-            } else {
+            }
+            else {
                 if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
                     $ret->actions = array(ORDER_VOID);
                 }
@@ -604,7 +627,8 @@ function authorize_get_status_action($order) {
         case AN_STATUS_CREDIT:
             if (AuthorizeNet::settled($order)) {
                 $ret->status = 'settled';
-            } else {
+            }
+            else {
                 if ($order->paymentmethod == AN_METHOD_CC && $canmanage) {
                     $ret->actions = array(ORDER_VOID);
                 }
@@ -643,9 +667,12 @@ function authorize_get_status_action($order) {
     }
 }
 
-function authorize_get_status_color($status) {
+
+function authorize_get_status_color($status)
+{
     $color = 'black';
-    switch ($status) {
+    switch ($status)
+    {
         case 'settled':
         case 'capturedpendingsettle':
             $color = '#339900'; // green
@@ -672,16 +699,17 @@ function authorize_get_status_color($status) {
     return $color;
 }
 
-function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=false, $unenrol=false, $nobutton=false, $extrahtml='') {
+function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=false, $unenrol=false, $nobutton=false, $extrahtml='')
+{
     global $CFG, $OUTPUT;
     global $authstrs;
 
-    $ret = '<form action="' . $CFG->wwwroot . '/enrol/authorize/index.php' . '" method="post"><div>' .
-            '<input type="hidden" name="order" value="' . $orderid . '" />' .
-            '<input type="hidden" name="do" value="' . $do . '" />' .
-            '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+    $ret =  '<form action="'.$CFG->wwwroot.'/enrol/authorize/index.php'.'" method="post"><div>' .
+            '<input type="hidden" name="order" value="'.$orderid.'" />' .
+            '<input type="hidden" name="do" value="'.$do.'" />' .
+            '<input type="hidden" name="sesskey" value="'. sesskey() . '" />';
     if (!empty($suborderid)) {
-        $ret .= '<input type="hidden" name="suborder" value="' . $suborderid . '" />';
+        $ret .= '<input type="hidden" name="suborder" value="'.$suborderid.'" />';
     }
     if (!empty($confirm)) {
         $ret .= '<input type="hidden" name="confirm" value="1" />';
@@ -690,10 +718,10 @@ function authorize_print_action_button($orderid, $do, $suborderid=0, $confirm=fa
         $ret .= html_writer::checkbox('unenrol', 1, false, $unenrol) . '<br />';
     }
     $ret .= $extrahtml;
-    $ret .= '<input type="submit" value="' . $authstrs->$do . '" />' .
+    $ret .= '<input type="submit" value="'.$authstrs->$do.'" />' .
             '</div></form>';
     if (!empty($nobutton)) {
-        $ret .= '<form method="get" action="index.php"><div><input type="hidden" name="order" value="' . $orderid . '" /><input type="submit" value="' . $nobutton . '" /></div></form>';
+        $ret .= '<form method="get" action="index.php"><div><input type="hidden" name="order" value="'.$orderid.'" /><input type="submit" value="'.$nobutton.'" /></div></form>';
     }
     return $ret;
 }
