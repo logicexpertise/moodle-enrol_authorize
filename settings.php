@@ -44,6 +44,24 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtime('enrol_authorize/an_cutoff_hour', 'an_cutoff_min', get_string('cutofftime', 'enrol_authorize'), get_string('cutofftimedesc', 'enrol_authorize'), array('h' => 0, 'm' => 5)));
 
+    // ---- user enrolment settings --------------------------------------------------------------------------
+    $settings->add(new admin_setting_heading('enrol_authorize_user_settings',
+                    get_string('user_settings', 'enrol_authorize'),
+                    get_string('reecipt_settings_desc', 'enrol_authorize')));
+
+    $options = array(
+        ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
+        ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
+        ENROL_EXT_REMOVED_UNENROL        => get_string('extremovedunenrol', 'enrol'),
+    );
+    $settings->add(new admin_setting_configselect('enrol_authorize/expiredaction', get_string('expiredaction', 'enrol_authorize'), get_string('expiredaction_help', 'enrol_authorize'), ENROL_EXT_REMOVED_KEEP, $options));
+
+    $options = array();
+    for ($i=0; $i<24; $i++) {
+        $options[$i] = $i;
+    }
+    $settings->add(new admin_setting_configselect('enrol_self/expirynotifyhour', get_string('expirynotifyhour', 'core_enrol'), '', 6, $options));
+
     // ---- receipt settings --------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_authorize_receipt_settings',
                     get_string('receipt_settings', 'enrol_authorize'),
@@ -98,8 +116,34 @@ if ($ADMIN->fulltree) {
                         get_string('defaultrole', 'enrol_authorize'), get_string('defaultrole_desc', 'enrol_authorize'), $student->id, $options));
     }
 
-    $settings->add(new admin_setting_configtext('enrol_authorize/enrolperiod',
-                    get_string('enrolperiod', 'enrol_authorize'), get_string('enrolperiod_desc', 'enrol_authorize'), 0, PARAM_INT));
+    $settings->add(new admin_setting_configduration('enrol_authorize/enrolperiod',
+        get_string('enrolperiod', 'enrol_authorize'), get_string('enrolperiod_desc', 'enrol_authorize'), 0));
+
+    $options = array(0 => get_string('no'), 1 => get_string('expirynotifyenroller', 'core_enrol'), 2 => get_string('expirynotifyall', 'core_enrol'));
+    $settings->add(new admin_setting_configselect('enrol_authorize/expirynotify',
+        get_string('expirynotify', 'core_enrol'), get_string('expirynotify_help', 'core_enrol'), 0, $options));
+
+    $settings->add(new admin_setting_configduration('enrol_authorize/expirythreshold',
+        get_string('expirythreshold', 'core_enrol'), get_string('expirythreshold_help', 'core_enrol'), 86400, 86400));
+
+    $options = array(0 => get_string('never'),
+                     1800 * 3600 * 24 => get_string('numdays', '', 1800),
+                     1000 * 3600 * 24 => get_string('numdays', '', 1000),
+                     365 * 3600 * 24 => get_string('numdays', '', 365),
+                     180 * 3600 * 24 => get_string('numdays', '', 180),
+                     150 * 3600 * 24 => get_string('numdays', '', 150),
+                     120 * 3600 * 24 => get_string('numdays', '', 120),
+                     90 * 3600 * 24 => get_string('numdays', '', 90),
+                     60 * 3600 * 24 => get_string('numdays', '', 60),
+                     30 * 3600 * 24 => get_string('numdays', '', 30),
+                     21 * 3600 * 24 => get_string('numdays', '', 21),
+                     14 * 3600 * 24 => get_string('numdays', '', 14),
+                     7 * 3600 * 24 => get_string('numdays', '', 7));
+    $settings->add(new admin_setting_configselect('enrol_authorize/longtimenosee',
+        get_string('longtimenosee', 'enrol_authorize'), get_string('longtimenosee_help', 'enrol_authorize'), 0, $options));
+
+    $settings->add(new admin_setting_configtext('enrol_authorize/maxenrolled',
+        get_string('maxenrolled', 'enrol_authorize'), get_string('maxenrolled_help', 'enrol_authorize'), 0, PARAM_INT));
 
     //------ email students? --------------------------------------------------------------------------------
 
