@@ -171,9 +171,11 @@ function message_to_admin($subject, $data) {
     $eventdata->subject           = "$SITE->fullname: Authorize.net ERROR";
     $eventdata->fullmessage       = $emailmessage;
     $eventdata->fullmessageformat = FORMAT_PLAIN;
-    $eventdata->fullmessagehtml   = '';
-    $eventdata->smallmessage      = '';
-    message_send($eventdata);
+    $eventdata->fullmessagehtml = '';
+    $eventdata->smallmessage = '';
+    // message_send($eventdata);
+    // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
+    email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage);
 }
 
 function send_welcome_messages($orderdata) {
@@ -242,9 +244,12 @@ function send_welcome_messages($orderdata) {
                 $eventdata->subject = get_config('email_subject', get_string('enrolmentnew', 'enrol', $SITE->fullname));
                 $eventdata->fullmessage = $emailmessage;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
-                $eventdata->fullmessagehtml   = '';
-                $eventdata->smallmessage      = '';
-                message_send($eventdata);
+                $eventdata->fullmessagehtml = '';
+                $eventdata->smallmessage = '';
+
+                // message_send($eventdata);
+                // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
+                email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage);
             }
         }
         while ($ei);

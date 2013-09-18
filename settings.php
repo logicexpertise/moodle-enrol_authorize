@@ -63,13 +63,13 @@ if ($ADMIN->fulltree) {
                     get_string('receipt_footerhtml_desc', 'enrol_authorize'), '', PARAM_CLEANHTML));
 
     // ---- email settings ------------------------------------------------
-    $settings->add(new admin_setting_heading('enrol_authorize_emaili_settings',
+    $settings->add(new admin_setting_heading('enrol_authorize_email_settings',
                     get_string('email_settings', 'enrol_authorize'),
                     get_string('email_settings_desc', 'enrol_authorize')));
-    $settings->add(new admin_setting_configtext('enrol_authorize_email_from',
+    $settings->add(new admin_setting_configtext('enrol_authorize/email_from',
                     get_string('email_from', 'enrol_authorize'),
                     get_string('email_from_desc', 'enrol_authorize'),$CFG->supportemail, PARAM_EMAIL));
-    $settings->add(new admin_setting_configtext('enrol_authorize_email_replyto',
+    $settings->add(new admin_setting_configtext('enrol_authorize/email_replyto',
                     get_string('email_replyto', 'enrol_authorize'),
                     get_string('email_replyto_desc', 'enrol_authorize'),$CFG->supportemail, PARAM_EMAIL));
     $settings->add(new admin_setting_configtext('enrol_authorize/email_subject',
