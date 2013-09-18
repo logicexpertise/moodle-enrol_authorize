@@ -157,6 +157,7 @@ function get_list_of_bank_account_types($getall = false) {
 function message_to_admin($subject, $data) {
     global $SITE;
 
+    $plugin = enrol_get_plugin('authorize');
     $admin = get_admin();
     $data = (array)$data;
 
@@ -173,9 +174,11 @@ function message_to_admin($subject, $data) {
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml = '';
     $eventdata->smallmessage = '';
+    $eventdata->replyto = $plugin->get_config('replyto', $sender);
     // message_send($eventdata);
     // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
     email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage);
+    email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage, '', '', '', true, $eventdata->replyto);
 }
 
 function send_welcome_messages($orderdata) {
@@ -200,6 +203,7 @@ function send_welcome_messages($orderdata) {
         $rs->close(); // Not going to iterate (but exit), close rs
         return;
     }
+    $plugin = enrol_get_plugin('authorize');
 
     if ($rs->valid() and $ei = current($rs))
     {
@@ -233,23 +237,24 @@ function send_welcome_messages($orderdata) {
                 $a->courses = implode("\n", $usercourses);
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
-                $emailmessage = get_config('email_body', get_string('welcometocoursesemail', 'enrol_authorize', $a));
+                $emailmessage = $plugin->get_config('email_body', get_string('welcometocoursesemail', 'enrol_authorize', $a));
 
                 $eventdata = new stdClass();
                 $eventdata->modulename = 'moodle';
                 $eventdata->component = 'enrol_authorize';
                 $eventdata->name = 'authorize_enrolment';
-                $eventdata->userfrom = get_config('email_from', $sender);
+                $eventdata->userfrom = $plugin->get_config('email_from', $sender);
                 $eventdata->userto = $user;
-                $eventdata->subject = get_config('email_subject', get_string('enrolmentnew', 'enrol', $SITE->fullname));
+                $eventdata->subject = $plugin->get_config('email_subject', get_string('enrolmentnew', 'enrol', $SITE->fullname));
                 $eventdata->fullmessage = $emailmessage;
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml = '';
                 $eventdata->smallmessage = '';
+                $eventdata->replyto = $plugin->get_config('replyto', $sender);
 
                 // message_send($eventdata);
                 // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
-                email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage);
+                email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage, '', '', '', true, $eventdata->replyto);
             }
         }
         while ($ei);
