@@ -360,8 +360,9 @@ class enrol_authorize_plugin extends enrol_plugin {
                                 $a->courses = $course->fullname;
                                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id";
                                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$USER->id";
-                                $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
-                                email_to_user($user, $from, $subject, $emailmessage);
+                                $emailmessage = $this->get_config('email_body', get_string('welcometocoursesemail', 'enrol_authorize', $a));
+                                $replyto = $this->get_config('email_replyto');
+                                email_to_user($user, $from, $subject, $emailmessage, '', '', '', true, $replyto);
                             }
                             redirect($CFG->wwwroot . '/enrol/authorize/index.php?order=' . $order->id);
                         } else { // if ($response->error || $response->declined) {

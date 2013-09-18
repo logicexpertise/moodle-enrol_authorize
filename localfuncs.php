@@ -177,7 +177,6 @@ function message_to_admin($subject, $data) {
     $eventdata->replyto = $plugin->get_config('email_replyto', $sender);
     // message_send($eventdata);
     // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
-    email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage);
     email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage, '', '', '', true, $eventdata->replyto);
 }
 
