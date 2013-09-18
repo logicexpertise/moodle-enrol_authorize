@@ -38,10 +38,19 @@ if ($USER->id != $order->userid) { // Current user viewing someone else's order
 $PAGE->set_url('/enrol/authorize/receipt.php', array('id' => $order->id, 'action' => 'receipt'));
 $PAGE->set_context($context);
 
+// first get configuration details for receipt printing
+$plugin = enrol_get_plugin('authorize');
+
+$info->prefix = $plugin->get_config('receipt_prefix');
+$info->nextnumber = $plugin->get_config('receipt_nextnumber');
+$info->address = $plugin->get_config('receipt_addresshtml');
+$info->footer = $plugin->get_config('receipt_footerhtml');
+$info->avs = (bool) $plugin->get_config('an_avs');
+
 $pdf = new TCPDF();
 
 $pdf->SetCreator('TCPDF');
-$pdf->SetAuthor('Authurize.Net');
+$pdf->SetAuthor('Authorize.Net');
 $pdf->SetTextColor(0, 0, 120);
 $pdf->SetTitle('Payment Received');
 $pdf->setPrintHeader(false);
@@ -51,18 +60,16 @@ $pdf->SetAutoPageBreak(true, 5);
 $pdf->AddPage();
 
 $pdf->SetFontSize(12);
-$pdf->writeHTML("<strong>PAYMENT RECEIPT</strong> <br/>Receipt No.: $order->receipt (Order No.: $order->id)<br/>", true, false, false, false, 'R');
-$addresshtml = get_config('enrol_authorize', 'receipt_addresshtml') .
+$pdf->writeHTML("<strong>PAYMENT RECEIPT</strong> <br/>Receipt Number: {$info->prefix}{$order->receipt} (Order No.: $order->id)<br/>", true, false, false, false, 'R');
+$addresshtml = $info->address .
         '<p/>' . date('M d, Y', $order->timecreated) .
         "<p/><hr/>";
 $pdf->SetFontSize(12);
-if (!empty($addresshtml)) {
-    $pdf->writeHTML($addresshtml, true, false, false, false, 'R');
-}
-$plugin = enrol_get_plugin('authorize');
-$cc = $DB->get_record('enrol_authorize_avs', array('orderid' => $order->id));
+$pdf->writeHTML($addresshtml, true, false, false, false, 'R');
 
-if ($plugin->get_config('an_avs') && $cc) {
+if ($info->avs) {
+    $cc = $DB->get_record('enrol_authorize_avs', array('orderid' => $order->id), '*', MUST_EXIST);
+
     $userhtml = "<i>$cc->ccfirstname $cc->cclastname<br/>" .
             utf8_decode("$cc->ccaddress") . "<br/>" .
             utf8_decode("$cc->cccity") . "<br/>" .
@@ -89,10 +96,6 @@ $receipthtml = "
     ";
 
 $pdf->writeHTML($receipthtml);
-
-$footerhtml = get_config('enrol_authorize', 'receipt_footerhtml');
-if (!empty($footerhtml)) {
-    $pdf->writeHTML($footerhtml);
-}
+$pdf->writeHTML($info->footer);
 $pdf->Output('receipt.pdf', 'I');
 ?>
