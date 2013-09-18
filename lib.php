@@ -138,6 +138,27 @@ class enrol_authorize_plugin extends enrol_plugin {
     }
     
     /**
+     * Determine if SSL is used.
+     *
+     * @since 2.6.0
+     * @link http://core.trac.wordpress.org/browser/tags/3.3.2/wp-includes/functions.php#L0
+     *
+     * @return bool True if SSL, false if not used.
+     * @license GPL
+     */
+    public static function is_ssl() {
+        if (isset($_SERVER['HTTPS'])) {
+            if ('on' == strtolower($_SERVER['HTTPS']))
+                return true;
+            if ('1' == $_SERVER['HTTPS'])
+                return true;
+        } elseif (isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] )) {
+            return true;
+        }
+        return true;
+    }
+
+    /**
      * Creates course enrol form, checks if form submitted
      * and enrols user if necessary. It can also redirect.
      *
@@ -148,10 +169,7 @@ class enrol_authorize_plugin extends enrol_plugin {
         global $CFG, $SITE, $USER, $OUTPUT, $DB;
 
         // ensure ssl is being used
-        if (!strpos($CFG->wwwroot, "https://")
-                && !isset($_SERVER['HTTPS'])
-                && $_SERVER['HTTPS'] !== "on")
-        {
+        if (!$this->is_ssl()) {
             print_error('httpsrequired', 'enrol_authorize');
         }
 
