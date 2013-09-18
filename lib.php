@@ -198,7 +198,7 @@ class enrol_authorize_plugin extends enrol_plugin {
             $users = sort_by_roleassignment_authority($users, $context);
             $teacher = array_shift($users);
         } else {
-            $teacher = false;
+            $teacher = $this->get_config('email_from');
         }
 
         if (!$instance->currency) {
@@ -349,7 +349,7 @@ class enrol_authorize_plugin extends enrol_plugin {
                             if ($this->get_config('mailstudents')) {
                                 // send_welcome_messages($order->id); // times out - use email_to_user instead
                                 $user = $DB->get_record('user', array('id' => $USER->id));
-                                if ($teacher) {
+                                if (!empty($teacher)) {
                                     $from = $teacher;
                                 } else {
                                     $from = get_admin();
