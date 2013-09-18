@@ -328,8 +328,8 @@ class enrol_authorize_plugin extends enrol_plugin {
                                 }
                                 // update enrol_authorize table
                                 $order->transid = $response->transaction_id; // Transaction Id
-                                $receiptnumber = get_config('enrol_authorize', 'receipt_nextnumber');
-                                $receiptprefix = get_config('enrol_authorize', 'receipt_prefix');
+                                $receiptnumber = $this->get_config('receipt_nextnumber');
+                                $receiptprefix = $this->get_config('receipt_prefix');
                                 $order->receipt = $receiptprefix . str_pad($receiptnumber, 4, '0', STR_PAD_LEFT);
                                 if (!$DB->update_record('enrol_authorize', $order)) {
                                     message_to_admin("Error while trying to update enrol_authorize with receipt for order # ", $order->id);

@@ -174,7 +174,7 @@ function message_to_admin($subject, $data) {
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml = '';
     $eventdata->smallmessage = '';
-    $eventdata->replyto = $plugin->get_config('replyto', $sender);
+    $eventdata->replyto = $plugin->get_config('email_replyto', $sender);
     // message_send($eventdata);
     // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
     email_to_user($eventdata->userto, $eventdata->userfrom, $eventdata->subject, $eventdata->fullmessage);
@@ -250,7 +250,7 @@ function send_welcome_messages($orderdata) {
                 $eventdata->fullmessageformat = FORMAT_PLAIN;
                 $eventdata->fullmessagehtml = '';
                 $eventdata->smallmessage = '';
-                $eventdata->replyto = $plugin->get_config('replyto', $sender);
+                $eventdata->replyto = $plugin->get_config('email_replyto', $sender);
 
                 // message_send($eventdata);
                 // Plugin is not set up to use messaging subsystem - send email instead, and fail silently
