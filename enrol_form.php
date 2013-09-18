@@ -124,6 +124,10 @@ class enrol_authorize_form extends moodleform
                 $mform->setDefault('ccauthcode', '');
             }
 
+            $mform->addElement('text', 'email', get_string('email', 'enrol_authorize'), 'size="30"');
+            $mform->setType('email', PARAM_EMAIL);
+            $mform->setDefault('email', $USER->email);
+
             if ($plugin->get_config('an_avs')) {
                 $mform->addElement('header', 'addressheader', '&nbsp;&nbsp;' . get_string('address'), '');
 
