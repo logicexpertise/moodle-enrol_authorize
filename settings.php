@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once 'localfuncs.php';
+global $SITE;
 
 if ($ADMIN->fulltree) {
     //--- settings ------------------------------------------------------------------------------------------
@@ -87,10 +88,10 @@ if ($ADMIN->fulltree) {
                     get_string('email_replyto_desc', 'enrol_authorize'),$CFG->supportemail, PARAM_EMAIL));
     $settings->add(new admin_setting_configtext('enrol_authorize/email_subject',
                     get_string('email_subject', 'enrol_authorize'),
-                    get_string('email_subject_desc', 'enrol_authorize'), '', PARAM_TEXT));
+                    get_string('email_subject_desc', 'enrol_authorize'), get_string('enrolmentnew', 'enrol', $SITE->fullname), PARAM_TEXT));
     $settings->add(new admin_setting_configtextarea('enrol_authorize/email_body',
                     get_string('email_body', 'enrol_authorize'),
-                    get_string('email_body_desc', 'enrol_authorize'), '', PARAM_CLEANHTML));
+                    get_string('email_body_desc', 'enrol_authorize'), get_string('welcometocoursesemail', 'enrol_authorize'), PARAM_CLEANHTML));
 
     //--- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_authorize_defaults',

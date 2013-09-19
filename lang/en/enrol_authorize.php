@@ -311,7 +311,7 @@ $string['receipt_footerhtml_desc'] = 'This will be printed in the receipt footer
 
 // email settings
 $string['email_settings'] = 'Email Settings';
-$string['email_settings_desc'] = 'Settings used for emailing a user when they have completed an enrolment';
+$string['email_settings_desc'] = 'Settings for the "Course Welcome Email" sent to a user when they have completed an enrolment.';
 $string['email_from'] = 'From address';
 $string['email_from_desc'] = 'The address that will appear in the email \'from\' field';
 $string['email_replyto'] = 'Reply To address';

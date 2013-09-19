@@ -502,7 +502,7 @@ class enrol_authorize_plugin extends enrol_plugin {
                                 } else {
                                     $from = get_admin();
                                 }
-                                $subject = get_string('enrolmentnew', 'enrol', $SITE->fullname);
+                                $subject = $this->get_config('email_subject', get_string('enrolmentnew', 'enrol', $SITE->fullname));
                                 $a = new stdClass;
                                 $a->name = $user->firstname;
                                 $a->courses = $course->fullname;
