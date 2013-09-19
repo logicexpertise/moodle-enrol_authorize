@@ -44,11 +44,6 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtime('enrol_authorize/an_cutoff_hour', 'an_cutoff_min', get_string('cutofftime', 'enrol_authorize'), get_string('cutofftimedesc', 'enrol_authorize'), array('h' => 0, 'm' => 5)));
 
-    // ---- user enrolment settings --------------------------------------------------------------------------
-    $settings->add(new admin_setting_heading('enrol_authorize_user_settings',
-                    get_string('user_settings', 'enrol_authorize'),
-                    get_string('reecipt_settings_desc', 'enrol_authorize')));
-
     $options = array(
         ENROL_EXT_REMOVED_KEEP           => get_string('extremovedkeep', 'enrol'),
         ENROL_EXT_REMOVED_SUSPENDNOROLES => get_string('extremovedsuspendnoroles', 'enrol'),
