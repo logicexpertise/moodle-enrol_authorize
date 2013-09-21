@@ -63,8 +63,16 @@ class enrol_authorize_edit_form extends moodleform
         $mform->setDefault('roleid', $plugin->get_config('roleid'));
 
 
-        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_authorize'), array('optional' => true, 'defaultunit' => 86400));
+        $mform->addElement('duration', 'enrolperiod', get_string('enrolperiod', 'enrol_authorize'), array('optional' => true, 'defaultunit' => DAYSECS));
         $mform->setDefault('enrolperiod', $plugin->get_config('enrolperiod'));
+
+        $options = array(0 => get_string('no'), 1 => get_string('expirynotifyenroller', 'core_enrol'), 2 => get_string('expirynotifyall', 'core_enrol'));
+        $mform->addElement('select', 'expirynotify', get_string('expirynotify', 'core_enrol'), $options);
+        $mform->addHelpButton('expirynotify', 'expirynotify', 'core_enrol');
+
+        $mform->addElement('duration', 'expirythreshold', get_string('expirythreshold', 'core_enrol'), array('optional' => false, 'defaultunit' => 86400));
+        $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
+        $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
 
 
         $mform->addElement('date_selector', 'enrolstartdate', get_string('enrolstartdate', 'enrol_authorize'), array('optional' => true));
@@ -73,6 +81,29 @@ class enrol_authorize_edit_form extends moodleform
 
         $mform->addElement('date_selector', 'enrolenddate', get_string('enrolenddate', 'enrol_authorize'), array('optional' => true));
         $mform->setDefault('enrolenddate', 0);
+
+        $options = array(0 => get_string('never'),
+                 1800 * DAYSECS => get_string('numdays', '', 1800),
+                 1000 * DAYSECS => get_string('numdays', '', 1000),
+                 365 * DAYSECS => get_string('numdays', '', 365),
+                 180 * DAYSECS => get_string('numdays', '', 180),
+                 150 * DAYSECS => get_string('numdays', '', 150),
+                 120 * DAYSECS => get_string('numdays', '', 120),
+                 90 * DAYSECS => get_string('numdays', '', 90),
+                 60 * DAYSECS => get_string('numdays', '', 60),
+                 30 * DAYSECS => get_string('numdays', '', 30),
+                 21 * DAYSECS => get_string('numdays', '', 21),
+                 14 * DAYSECS => get_string('numdays', '', 14),
+                 7 * DAYSECS => get_string('numdays', '', 7));
+        $mform->addElement('select', 'customint2', get_string('longtimenosee', 'enrol_authorize'), $options);
+        $mform->addHelpButton('customint2', 'longtimenosee', 'enrol_authorize');
+
+        $mform->addElement('text', 'customint3', get_string('maxenrolled', 'enrol_authorize'));
+        $mform->addHelpButton('customint3', 'maxenrolled', 'enrol_authorize');
+        $mform->setType('customint3', PARAM_INT);
+
+        $mform->addElement('advcheckbox', 'customint4', get_string('mailstudents', 'enrol_authorize'));
+        $mform->addHelpButton('customint4', 'mailstudents', 'enrol_authorize');
 
         $mform->addElement('hidden', 'id');
         $mform->addElement('hidden', 'courseid');

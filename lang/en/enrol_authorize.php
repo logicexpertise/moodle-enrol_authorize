@@ -283,6 +283,7 @@ $string['void'] = 'Void';
 $string['voidyes'] = 'The transaction will be cancelled. Are you sure?';
 $string['mailstudents'] = 'Send course welcome email';
 $string['mailstudents_desc'] = '';
+$string['mailstudents_help'] = 'If enabled, users receive a welcome message via email when they self-enrol in a course.';
 $string['welcomemessage'] = 'Thank you for your payment. You have been enrolled in this course.';
 $string['welcometocoursesemail'] = 'Dear {$a->name},
 
