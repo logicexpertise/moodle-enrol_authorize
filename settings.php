@@ -37,7 +37,7 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('enrol_authorize/apilogin', get_string('apilogin', 'enrol_authorize'), get_string('apilogin_desc', 'enrol_authorize'), '', PARAM_TEXT));
 
-    $settings->add(new admin_setting_configtext('enrol_authorize/transactionkey', get_string('transactionkey', 'enrol_authorize'), get_string('transactionkey_desc', 'enrol_authorize'), '', PARAM_TEXT));
+    $settings->add(new admin_setting_configpasswordunmask('enrol_authorize/transactionkey', get_string('transactionkey', 'enrol_authorize'), get_string('transactionkey_desc', 'enrol_authorize'), '', PARAM_TEXT));
 
     $settings->add(new admin_setting_configmulticheckbox('enrol_authorize/acceptcc', get_string('adminacceptccs', 'enrol_authorize'), '', '', get_list_of_creditcards(true)));
 
