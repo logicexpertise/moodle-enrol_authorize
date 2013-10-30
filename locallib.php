@@ -75,9 +75,9 @@ function authorize_print_orders($courseid, $userid) {
 
     $baseurl = $CFG->wwwroot.'/enrol/authorize/index.php?user='.$userid;
 
-    $params = array('userid'=>$userid);
-    $sql = "SELECT c.id, c.fullname FROM {course} c JOIN {enrol_authorize} e ON c.id = e.courseid ";
-    $sql .= ($userid > 0) ? "WHERE (e.userid=:userid) " : '';
+    $params = array('userid' => $userid);
+    $sql = "SELECT DISTINCT c.id, c.fullname, c.sortorder FROM {course} c JOIN {enrol_authorize} e ON c.id = e.courseid ";
+    $sql .= ( $userid > 0) ? "WHERE (e.userid=:userid) " : '';
     $sql .= "ORDER BY c.sortorder, c.fullname";
     if (($popupcrs = $DB->get_records_sql_menu($sql, $params))) {
         $popupcrs = array($SITE->id => $SITE->fullname) + $popupcrs;
@@ -553,6 +553,18 @@ function authorize_print_order($orderid)
             echo "<h4>" . get_string('returns', 'enrol_authorize') . "</h4>\n";
             echo html_writer::table($t2);
         }
+    }
+
+    /// if status is AUTH_CAPTURE, show a "print receipt" button
+    if ($order->status == AN_STATUS_AUTHCAPTURE) {
+        $link = new moodle_url($CFG->wwwroot . '/enrol/authorize/receipt.php', array('order' => $order->id, 'action' => 'receipt'));
+        echo '<div style="text-align:center;">';
+        $button = new single_button($link, get_string('printreceipt', 'enrol_authorize'));
+        $button->add_action(new popup_action('click', $link, array('height' => 600, 'width' => 800)));
+        echo $OUTPUT->render($button);
+        // continue to course front page
+        echo $OUTPUT->continue_button(new moodle_url($CFG->wwwroot.'/course/view.php', array('id'=>$order->courseid)));
+        echo '</div';
     }
 
     echo $OUTPUT->footer();

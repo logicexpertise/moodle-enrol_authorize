@@ -26,7 +26,7 @@
 
 
 /// Load libraries
-    require_once('../../config.php');
+    require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
     require_once('const.php');
     require_once('locallib.php');
     require_once('localfuncs.php');
