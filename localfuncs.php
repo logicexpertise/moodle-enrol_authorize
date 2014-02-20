@@ -103,12 +103,14 @@ function get_list_of_creditcards($getall = false) {
     if ($getall) {
         return $alltypes;
     }
-
+	
+	$acceptcc = $plugin->get_config('acceptcc');
+	$acceptcc = explode(',', $acceptcc);
     $ret = array();
     foreach ($alltypes as $code=>$name) {
-        if ($plugin->get_config("an_acceptcc_{$code}")) {
-            $ret[$code] = $name;
-        }
+        if (in_array($code, $acceptcc)) {
+			$ret[$code] = $name;
+		}
     }
 
     return $ret;
