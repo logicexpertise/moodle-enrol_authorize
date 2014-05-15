@@ -91,7 +91,7 @@ if ($ADMIN->fulltree) {
                     get_string('email_subject_desc', 'enrol_authorize'), get_string('enrolmentnew', 'enrol', $SITE->fullname), PARAM_TEXT));
     $settings->add(new admin_setting_configtextarea('enrol_authorize/email_body',
                     get_string('email_body', 'enrol_authorize'),
-                    get_string('email_body_desc', 'enrol_authorize'), get_string('welcometocoursesemail', 'enrol_authorize'), PARAM_CLEANHTML));
+                    get_string('email_body_desc', 'enrol_authorize'), get_string('welcometocoursesemail', 'enrol_authorize'), PARAM_RAW));
 
     //--- enrol instance defaults ----------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_authorize_defaults',
