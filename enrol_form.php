@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
+require_once 'const.php';
+require_once 'localfuncs.php';
 
 class enrol_authorize_form extends moodleform
 {
